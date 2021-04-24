@@ -250,14 +250,36 @@ void introduce_blood_vessel_sections( void )
 void generateSection(double radius, std::vector<double>& PosCenter)
 {
 	double theta = 0;
-	int number_of_elements = 0.4*radius;
+	int number_of_elements = floor (0.4*radius);
 	const double PI = 3.1415926535897932384626433832795;
 
+	// External circle
 	for( int i=0 ;i <= number_of_elements; i++ )
 	{
 		Cell* pCell = create_cell( blood_vessel_section );
 		pCell->assign_position( radius*cos(theta) + PosCenter[0], radius*sin(theta)+ PosCenter[1], 0 );
 		theta = theta + (360.0/number_of_elements)*(PI/180);
+	}
+
+	// Center
+	Cell* pCell = create_cell( blood_vessel_section );
+	pCell->assign_position( PosCenter[0], PosCenter[1], 0 );
+
+	// Internal circles
+	double dr = 0.75*pCell->phenotype.geometry.radius;
+	int NumArc = floor( radius/dr );
+	double radiusTemp = dr;
+	for( int j=1 ;j < NumArc; j++ )
+	{
+		theta = 0;
+		radiusTemp = j*dr;
+		number_of_elements = floor (0.4*radiusTemp);
+		for( int i=0 ;i <= number_of_elements; i++ )
+		{
+			Cell* pCell = create_cell( blood_vessel_section );
+			pCell->assign_position( radiusTemp*cos(theta) + PosCenter[0], radiusTemp*sin(theta)+ PosCenter[1], 0 );
+			theta = theta + (360.0/number_of_elements)*(PI/180);
+		}
 	}
 	return;
 }
@@ -450,8 +472,6 @@ void tumor_cell_phenotype( Cell* pCell, Phenotype& phenotype, double dt )
 
 std::vector<std::string> AMIGOS_coloring_function( Cell* pCell )
 {
-	static int section_type = get_cell_definition( "blood vessel section" ).type;
-
 	static int genes_i = 0;
 	static int proteins_i =1;
 	static int creation_rates_i = 2;
@@ -460,7 +480,7 @@ std::vector<std::string> AMIGOS_coloring_function( Cell* pCell )
 	static int red_i = 0;
 	static int green_i = 1;
 
-    std::vector< std::string > output( 4, "black" );
+  std::vector< std::string > output( 4, "black" );
 
 	// oxygen;
   static int oxygen_i = get_default_microenvironment()->find_density_index( "oxygen" );
@@ -469,11 +489,12 @@ std::vector<std::string> AMIGOS_coloring_function( Cell* pCell )
 	static int cyto_color_i = 4;
 	static int nuclear_color_i = 5;
 
-	if ( pCell->type == section_type )
+	if ( pCell->type == blood_vessel_section.type )
 	{
 		output[0] = "rgb(255,0,0)";
 		output[1] = "rgb(255,0,0)";
 		output[2] = "rgb(255,0,0)";
+		output[3] = "rgb(255,0,0)";
 
 		pCell->custom_data.vector_variables[cyto_color_i].value[0] = 255;
 		pCell->custom_data.vector_variables[cyto_color_i].value[1] = 0;
