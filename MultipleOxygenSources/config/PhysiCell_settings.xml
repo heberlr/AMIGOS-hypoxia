@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+###############################################################################
+# If you use PhysiCell in your project, please cite PhysiCell and the version #
+# number, such as below:                                                      #
+#                                                                             #
+# We implemented and solved the model using PhysiCell (Version 1.3.1) [1].    #
+#                                                                             #
+# [1] A Ghaffarizadeh, R Heiland, SH Friedman, SM Mumenthaler, and P Macklin, #
+#     PhysiCell: an Open Source Physics-Based Cell Simulator for Multicellu-  #
+#     lar Systems, PLoS Comput. Biol. 14(2): e1005991, 2018                   #
+#     DOI: 10.1371/journal.pcbi.1005991                                       #
+#                                                                             #
+# Because PhysiCell extensively uses BioFVM, we suggest you also cite BioFVM  #
+#     as below:                                                               #
+#                                                                             #
+# We implemented and solved the model using PhysiCell (Version 1.3.1) [1],    #
+# with BioFVM [2] to solve the transport equations.                           #
+#                                                                             #
+# [1] A Ghaffarizadeh, R Heiland, SH Friedman, SM Mumenthaler, and P Macklin, #
+#     PhysiCell: an Open Source Physics-Based Cell Simulator for Multicellu-  #
+#     lar Systems, PLoS Comput. Biol. 14(2): e1005991, 2018                   #
+#     DOI: 10.1371/journal.pcbi.1005991                                       #
+#                                                                             #
+# [2] A Ghaffarizadeh, SH Friedman, and P Macklin, BioFVM: an efficient para- #
+#    llelized diffusive transport solver for 3-D biological simulations,      #
+#    Bioinformatics 32(8): 1256-8, 2016. DOI: 10.1093/bioinformatics/btv730   #
+#                                                                             #
+###############################################################################
+#                                                                             #
+# BSD 3-Clause License (see https://opensource.org/licenses/BSD-3-Clause)     #
+#                                                                             #
+# Copyright (c) 2015-2018, Paul Macklin and the PhysiCell Project             #
+# All rights reserved.                                                        #
+#                                                                             #
+# Redistribution and use in source and binary forms, with or without          #
+# modification, are permitted provided that the following conditions are met: #
+#                                                                             #
+# 1. Redistributions of source code must retain the above copyright notice,   #
+# this list of conditions and the following disclaimer.                       #
+#                                                                             #
+# 2. Redistributions in binary form must reproduce the above copyright        #
+# notice, this list of conditions and the following disclaimer in the         #
+# documentation and/or other materials provided with the distribution.        #
+#                                                                             #
+# 3. Neither the name of the copyright holder nor the names of its            #
+# contributors may be used to endorse or promote products derived from this   #
+# software without specific prior written permission.                         #
+#                                                                             #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" #
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE   #
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE  #
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE   #
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR         #
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF        #
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS    #
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN     #
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)     #
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE  #
+# POSSIBILITY OF SUCH DAMAGE.                                                 #
+#                                                                             #
+###############################################################################
+*/
+--> 
+
+<!--
+<user_details />
+-->
+
+<PhysiCell_settings version="devel-version">
+	<domain>
+		<x_min>-1500</x_min>
+		<x_max>1500</x_max>
+		<y_min>-1500</y_min>
+		<y_max>1500</y_max>
+		<z_min>-10</z_min>
+		<z_max>10</z_max>
+		<dx>20</dx>
+		<dy>20</dy>
+		<dz>20</dz>
+		<use_2D>true</use_2D>
+	</domain>
+	
+	<overall>
+		<max_time units="min">7800</max_time> 
+		<time_units>min</time_units>
+		<space_units>micron</space_units>	
+		
+		<dt_diffusion units="min">0.01</dt_diffusion>
+		<dt_mechanics units="min">0.1</dt_mechanics>
+		<dt_phenotype units="min">6</dt_phenotype>	
+	</overall>
+	
+	<parallel>
+		<omp_num_threads>10</omp_num_threads>
+	</parallel> 
+	
+	<save>
+		<folder>output</folder> <!-- use . for root --> 
+
+		<full_data>
+			<interval units="min">60</interval>
+			<enable>true</enable>
+		</full_data>
+		
+		<SVG>
+			<interval units="min">60</interval>
+			<enable>true</enable>
+		</SVG>
+		
+		<legacy_data>
+			<enable>false</enable>
+		</legacy_data>
+	</save>
+
+	<microenvironment_setup>
+		<variable name="oxygen" units="mmHg" ID="0">
+			<physical_parameter_set>
+				<diffusion_coefficient units="micron^2/min">100000.00</diffusion_coefficient>
+				<decay_rate units="1/min">0.1</decay_rate>  
+			</physical_parameter_set>
+			<initial_condition units="mmHg">45.94</initial_condition>
+			<Dirichlet_boundary_condition units="mmHg" enabled="true">45.94</Dirichlet_boundary_condition>
+		</variable>
+		
+		<options>
+			<calculate_gradients>true</calculate_gradients>
+			<track_internalized_substrates_in_each_agent>false</track_internalized_substrates_in_each_agent>
+			<!-- not yet supported --> 
+			<initial_condition type="matlab" enabled="false">
+				<filename>./config/initial.mat</filename>
+			</initial_condition>
+			<!-- not yet supported --> 
+			<dirichlet_nodes type="matlab" enabled="false">
+				<filename>./config/dirichlet.mat</filename>
+			</dirichlet_nodes>
+		</options>
+	</microenvironment_setup>
+	
+	<user_parameters>	    
+		<hypoxia_pers_time type="double" units="min" description="phenotype persistent time of GFP+ cells">3000</hypoxia_pers_time>
+		<fraction_rsp type="double" units="dimensionless" description="fraction of GFP+ cells with different migration bias (bias_green_rsp)">0.5</fraction_rsp>
+        <bias_green_rsp type="double" units="dimensionless" description="migration bias for GFP + cells (for fraction_rsp)">0.5</bias_green_rsp>
+        <hypoxyprobe type="bool" description="mark with hypoxyprobe">false</hypoxyprobe>
+		<speed_red type="double" units="micron/min" description="migration speed for DsRed+ cells">0.2938</speed_red>
+		<pers_time_red type="double" units="min" description="migration persistent time for DsRed+ cells">15.0</pers_time_red>
+		<bias_red type="double" units="dimensionless" description="migration bias for DsRed+ cells">0.1719</bias_red>
+		<speed_green type="double" units="micron/min" description="migration speed for GFP+ cells">0.4755</speed_green>
+		<pers_time_green type="double" units="min" description="migration persistent time for GFP+ cells">15.0</pers_time_green>
+		<bias_green type="double" units="dimensionless" description="migration bias for GFP+ cells">0.1791</bias_green>  
+        <initial_tumor_rad type="double" units="micron" description="initial tumor radius">250.0</initial_tumor_rad>
+       <cell_oxy_cons type="double" units="1/min" description="oxygen consumption rate by each cell">10.0</cell_oxy_cons>
+        <rate_KnToKp type="double" units="1/min" description="transition rate from Ki67- to Ki67+ (for saturated signal)">0.00363</rate_KnToKp>
+		<rate_KpToKn type="double" units="1/min" description="transition rate from Ki67+ to Ki67-">0.00107</rate_KpToKn>
+        <sigma_S type="double" units="mmHg" description="oxygen pressure threshold to signal proliferation saturation">38.0</sigma_S>
+		<sigma_T type="double" units="mmHg" description="min oxygen pressure to signal proliferation">6.0</sigma_T>
+        <sigma_H type="double" units="mmHg" description="oxygen pressure threshold to signal hypoxia">10.0</sigma_H>
+        <protein_prod_rate type="double" units="1/min" description="protein production rate">4.8e-4</protein_prod_rate>
+        <protein_deg_rate type="double" units="1/min" description="protein degradation rate">6.8e-5</protein_deg_rate>
+    </user_parameters>
+</PhysiCell_settings>
