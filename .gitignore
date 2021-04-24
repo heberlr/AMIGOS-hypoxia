@@ -9,3 +9,7 @@
 *.out
 *.app
 *.pyc
+
+*.svg
+*.mat
+*.xml

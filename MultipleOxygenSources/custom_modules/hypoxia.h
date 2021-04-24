@@ -79,6 +79,8 @@ void oxygen_taxis_motility( Cell* pCell, Phenotype& phenotype, double dt );
 void create_cell_types( void );
 void create_blood_vessel_section( void );
 
+void introduce_blood_vessel_sections( void );
+void generateSection(double radius, std::vector<double>& PosCenter);
 void setup_tissue();
 
 // set up the microenvironment to include the immunostimulatory factor

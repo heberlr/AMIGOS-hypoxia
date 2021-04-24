@@ -62,7 +62,7 @@
 #                                                                             #
 ###############################################################################
 */
---> 
+-->
 
 <!--
 <user_details />
@@ -81,34 +81,34 @@
 		<dz>20</dz>
 		<use_2D>true</use_2D>
 	</domain>
-	
+
 	<overall>
-		<max_time units="min">7800</max_time> 
+		<max_time units="min">78</max_time>
 		<time_units>min</time_units>
-		<space_units>micron</space_units>	
-		
+		<space_units>micron</space_units>
+
 		<dt_diffusion units="min">0.01</dt_diffusion>
 		<dt_mechanics units="min">0.1</dt_mechanics>
-		<dt_phenotype units="min">6</dt_phenotype>	
+		<dt_phenotype units="min">6</dt_phenotype>
 	</overall>
-	
+
 	<parallel>
 		<omp_num_threads>10</omp_num_threads>
-	</parallel> 
-	
+	</parallel>
+
 	<save>
-		<folder>output</folder> <!-- use . for root --> 
+		<folder>output</folder> <!-- use . for root -->
 
 		<full_data>
 			<interval units="min">60</interval>
 			<enable>true</enable>
 		</full_data>
-		
+
 		<SVG>
 			<interval units="min">60</interval>
 			<enable>true</enable>
 		</SVG>
-		
+
 		<legacy_data>
 			<enable>false</enable>
 		</legacy_data>
@@ -118,27 +118,27 @@
 		<variable name="oxygen" units="mmHg" ID="0">
 			<physical_parameter_set>
 				<diffusion_coefficient units="micron^2/min">100000.00</diffusion_coefficient>
-				<decay_rate units="1/min">0.1</decay_rate>  
+				<decay_rate units="1/min">0.1</decay_rate>
 			</physical_parameter_set>
 			<initial_condition units="mmHg">45.94</initial_condition>
-			<Dirichlet_boundary_condition units="mmHg" enabled="true">45.94</Dirichlet_boundary_condition>
+			<Dirichlet_boundary_condition units="mmHg" enabled="false">45.94</Dirichlet_boundary_condition>
 		</variable>
-		
+
 		<options>
 			<calculate_gradients>true</calculate_gradients>
 			<track_internalized_substrates_in_each_agent>false</track_internalized_substrates_in_each_agent>
-			<!-- not yet supported --> 
+			<!-- not yet supported -->
 			<initial_condition type="matlab" enabled="false">
 				<filename>./config/initial.mat</filename>
 			</initial_condition>
-			<!-- not yet supported --> 
+			<!-- not yet supported -->
 			<dirichlet_nodes type="matlab" enabled="false">
 				<filename>./config/dirichlet.mat</filename>
 			</dirichlet_nodes>
 		</options>
 	</microenvironment_setup>
-	
-	<user_parameters>	    
+
+	<user_parameters>
 		<hypoxia_pers_time type="double" units="min" description="phenotype persistent time of GFP+ cells">3000</hypoxia_pers_time>
 		<fraction_rsp type="double" units="dimensionless" description="fraction of GFP+ cells with different migration bias (bias_green_rsp)">0.5</fraction_rsp>
         <bias_green_rsp type="double" units="dimensionless" description="migration bias for GFP + cells (for fraction_rsp)">0.5</bias_green_rsp>
@@ -148,7 +148,7 @@
 		<bias_red type="double" units="dimensionless" description="migration bias for DsRed+ cells">0.1719</bias_red>
 		<speed_green type="double" units="micron/min" description="migration speed for GFP+ cells">0.4755</speed_green>
 		<pers_time_green type="double" units="min" description="migration persistent time for GFP+ cells">15.0</pers_time_green>
-		<bias_green type="double" units="dimensionless" description="migration bias for GFP+ cells">0.1791</bias_green>  
+		<bias_green type="double" units="dimensionless" description="migration bias for GFP+ cells">0.1791</bias_green>
         <initial_tumor_rad type="double" units="micron" description="initial tumor radius">250.0</initial_tumor_rad>
        <cell_oxy_cons type="double" units="1/min" description="oxygen consumption rate by each cell">10.0</cell_oxy_cons>
         <rate_KnToKp type="double" units="1/min" description="transition rate from Ki67- to Ki67+ (for saturated signal)">0.00363</rate_KnToKp>

@@ -63,6 +63,8 @@
 
 #include "./hypoxia.h"
 
+Cell_Definition blood_vessel_section;
+
 void create_blood_vessel_section( void )
 {
 	blood_vessel_section = cell_defaults;
@@ -80,9 +82,9 @@ void create_blood_vessel_section( void )
 	static int oxygen_ID = microenvironment.find_density_index( "oxygen" ); // 0
 
 	// oxygen
-	blood_vessel_section.phenotype.secretion.secretion_rates[oxygen_ID] = default_microenvironment_options.Dirichlet_condition_vector;
+	blood_vessel_section.phenotype.secretion.secretion_rates[oxygen_ID] = default_microenvironment_options.Dirichlet_condition_vector[0];
 	blood_vessel_section.phenotype.secretion.uptake_rates[oxygen_ID] = 0.0;
-	blood_vessel_section.phenotype.secretion.saturation_densities[oxygen_ID] = default_microenvironment_options.Dirichlet_condition_vector;
+	blood_vessel_section.phenotype.secretion.saturation_densities[oxygen_ID] = default_microenvironment_options.Dirichlet_condition_vector[0];
 
 	// turn off apoptosis
 	int apoptosis_index = blood_vessel_section.phenotype.death.find_death_model_index( PhysiCell_constants::apoptosis_death_model );
@@ -227,6 +229,39 @@ std::vector<std::vector<double>> create_cell_sphere_positions(double cell_radius
 	return cells;
 }
 
+void introduce_blood_vessel_sections( void )
+{
+
+	double radius = 100.0;
+	std::vector<double> PosCenter = {750.0, 750.0, 0.0};
+
+	generateSection( radius, PosCenter);
+
+	radius = 50.0; PosCenter = {-750.0, -750.0, 0.0};
+	generateSection( radius, PosCenter);
+	return;
+}
+
+// bool check_neigboors()
+// {
+//
+// }
+
+void generateSection(double radius, std::vector<double>& PosCenter)
+{
+	double theta = 0;
+	int number_of_elements = 0.4*radius;
+	const double PI = 3.1415926535897932384626433832795;
+
+	for( int i=0 ;i <= number_of_elements; i++ )
+	{
+		Cell* pCell = create_cell( blood_vessel_section );
+		pCell->assign_position( radius*cos(theta) + PosCenter[0], radius*sin(theta)+ PosCenter[1], 0 );
+		theta = theta + (360.0/number_of_elements)*(PI/180);
+	}
+	return;
+}
+
 void setup_tissue( void )
 {
 	static int genes_i = 0;
@@ -249,8 +284,9 @@ void setup_tissue( void )
 	double x_outer = tumor_radius;
 	double y = 0.0;
 
+	introduce_blood_vessel_sections();
 
-    if( default_microenvironment_options.simulate_2D == true ){
+  if( default_microenvironment_options.simulate_2D == true ){
         int n = 0;
         while( y < tumor_radius )
         {
@@ -297,6 +333,7 @@ void setup_tissue( void )
             pCell->assign_position( positions[i] );
         }
     }
+
 	return;
 }
 
@@ -413,6 +450,8 @@ void tumor_cell_phenotype( Cell* pCell, Phenotype& phenotype, double dt )
 
 std::vector<std::string> AMIGOS_coloring_function( Cell* pCell )
 {
+	static int section_type = get_cell_definition( "blood vessel section" ).type;
+
 	static int genes_i = 0;
 	static int proteins_i =1;
 	static int creation_rates_i = 2;
@@ -424,11 +463,28 @@ std::vector<std::string> AMIGOS_coloring_function( Cell* pCell )
     std::vector< std::string > output( 4, "black" );
 
 	// oxygen;
-    static int oxygen_i = get_default_microenvironment()->find_density_index( "oxygen" );
+  static int oxygen_i = get_default_microenvironment()->find_density_index( "oxygen" );
 	double pO2 = (pCell->nearest_density_vector())[oxygen_i];
 
 	static int cyto_color_i = 4;
 	static int nuclear_color_i = 5;
+
+	if ( pCell->type == section_type )
+	{
+		output[0] = "rgb(255,0,0)";
+		output[1] = "rgb(255,0,0)";
+		output[2] = "rgb(255,0,0)";
+
+		pCell->custom_data.vector_variables[cyto_color_i].value[0] = 255;
+		pCell->custom_data.vector_variables[cyto_color_i].value[1] = 0;
+		pCell->custom_data.vector_variables[cyto_color_i].value[2] = 0;
+
+		pCell->custom_data.vector_variables[nuclear_color_i].value[0] = 255;
+		pCell->custom_data.vector_variables[nuclear_color_i].value[1] = 0;
+		pCell->custom_data.vector_variables[nuclear_color_i].value[2] = 0;
+
+		return output;
+	}
 
 	// live cells are a combination of red and green
 	if( pCell->phenotype.death.dead == false )
