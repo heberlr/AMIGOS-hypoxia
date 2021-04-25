@@ -149,7 +149,7 @@
 		<speed_green type="double" units="micron/min" description="migration speed for GFP+ cells">0.4755</speed_green>
 		<pers_time_green type="double" units="min" description="migration persistent time for GFP+ cells">15.0</pers_time_green>
 		<bias_green type="double" units="dimensionless" description="migration bias for GFP+ cells">0.1791</bias_green>
-        <initial_tumor_rad type="double" units="micron" description="initial tumor radius">250.0</initial_tumor_rad>
+        <initial_tumor_rad type="double" units="micron" description="initial tumor radius">500.0</initial_tumor_rad>
        <cell_oxy_cons type="double" units="1/min" description="oxygen consumption rate by each cell">10.0</cell_oxy_cons>
         <rate_KnToKp type="double" units="1/min" description="transition rate from Ki67- to Ki67+ (for saturated signal)">0.00363</rate_KnToKp>
 		<rate_KpToKn type="double" units="1/min" description="transition rate from Ki67+ to Ki67-">0.00107</rate_KpToKn>

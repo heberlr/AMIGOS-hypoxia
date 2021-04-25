@@ -80,7 +80,8 @@ void create_cell_types( void );
 void create_blood_vessel_section( void );
 
 void introduce_blood_vessel_sections( void );
-void generateSection(double radius, std::vector<double>& PosCenter);
+bool check_position(std::vector<double> PosCenter, double tolerance);
+void generateSection(double radius, std::vector<double> PosCenter);
 void setup_tissue();
 
 // set up the microenvironment to include the immunostimulatory factor

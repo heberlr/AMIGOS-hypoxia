@@ -231,23 +231,83 @@ std::vector<std::vector<double>> create_cell_sphere_positions(double cell_radius
 
 void introduce_blood_vessel_sections( void )
 {
+	// Center - 1
+	generateSection( 30.0, {0.0, 0.0, 0.0});
 
-	double radius = 100.0;
-	std::vector<double> PosCenter = {750.0, 750.0, 0.0};
+	// // Big section - 10
+	double radius = 20.0;
+	generateSection( radius, {-1017.25, 1287.82, 0.0} );
+	generateSection( radius, {-308.901, 926.239, 0.0} );
+	generateSection( radius, {-1341.05, 179.929, 0.0} );
+	generateSection( radius, {-504.902, -1102.80, 0.0} );
+	generateSection( radius, {-224.167, -1223.29, 0.0} );
+	generateSection( radius, {1111.73, -1292.99, 0.0} );
+	generateSection( radius, {-454.762, -793.049, 0.0} );
+	generateSection( radius, {-585.897, -680.303, 0.0} );
+	generateSection( radius, {-559.267, -241.959, 0.0} );
+	generateSection( radius, {567.258, 375.824, 0.0} );
 
-	generateSection( radius, PosCenter);
+	// // Medium sections - 15
+	radius = 15;
+	generateSection( radius, {1008.60, 832.903, 0.0} );
+	generateSection( radius, {552.015, 953.239, 0.0} );
+	generateSection( radius, {-264.210, 1007.64, 0.0} );
+	generateSection( radius, {-838.913, 1122.63, 0.0} );
+	generateSection( radius, {-815.644, 718.447, 0.0} );
+	generateSection( radius, {-653.668, -142.304, 0.0} );
+	generateSection( radius, {-816.639, -418.037, 0.0} );
+	generateSection( radius, {-1365.75, -1056.31, 0.0} );
+	generateSection( radius, {-833.018, -1139.84, 0.0} );
+	generateSection( radius, {85.5327, -1236.15, 0.0} );
+	generateSection( radius, {744.204, -1374.68, 0.0} );
+	generateSection( radius, {-360.811, -1407.14, 0.0} );
+	generateSection( radius, {77.5255, -1388.38, 0.0} );
+	generateSection( radius, {-81.6083, -278.287, 0.0} );
+	generateSection( radius, {1033.52, -684.135, 0.0} );
 
-	radius = 50.0; PosCenter = {-750.0, -750.0, 0.0};
-	generateSection( radius, PosCenter);
+	// Small sections - 20
+	radius = 10;
+	generateSection( radius, {-1009.48, 1164.47, 0.0} );
+	generateSection( radius, {-720.766, 1164.72, 0.0} );
+	generateSection( radius, {953.641, 1011.33, 0.0} );
+	generateSection( radius, {-1282.66, 914.888, 0.0} );
+	generateSection( radius, {-1282.94, 605.177, 0.0} );
+	generateSection( radius, {-1002.74, -129.486, 0.0} );
+	generateSection( radius, {-682.987, -654.141, 0.0} );
+	generateSection( radius, {-740.865, -809.047, 0.0} );
+	generateSection( radius, {-1121.68, -1082.35, 0.0} );
+	generateSection( radius, {-344.599, -876.942, 0.0} );
+	generateSection( radius, {382.422, -892.054, 0.0} );
+	generateSection( radius, {-260.210, -420.175, 0.0} );
+	generateSection( radius, {-275.933, -391.318, 0.0} );
+	generateSection( radius, {70.5355, -377.891, 0.0} );
+	generateSection( radius, {275.334, -293.722, 0.0} );
+	generateSection( radius, {312.518, 207.623, 0.0} );
+	generateSection( radius, {-543.018, 330.234, 0.0} );
+	generateSection( radius, {-319.967, 277.935, 0.0} );
+	generateSection( radius, {-25.7737, 540.660, 0.0} );
+	generateSection( radius, {215.864, 732.472, 0.0} );
+	//
+	// double radius = 100.0;
+	// std::vector<double> PosCenter = {750.0, 750.0, 0.0};
+	//
+	// generateSection( radius, PosCenter);
+	//
+	// radius = 50.0; PosCenter = {-750.0, -750.0, 0.0};
+	// generateSection( radius, PosCenter);
 	return;
 }
 
-// bool check_neigboors()
-// {
-//
-// }
+bool check_position(std::vector<double> PosCenter, double tolerance)
+{
+	for (int i = 0; i < (*all_cells).size(); i++) {
+		if (	dist( (*all_cells)[i]->position, PosCenter ) < tolerance)
+			return false;
+	}
+	return true;
+}
 
-void generateSection(double radius, std::vector<double>& PosCenter)
+void generateSection(double radius, std::vector<double> PosCenter)
 {
 	double theta = 0;
 	int number_of_elements = floor (0.4*radius);
@@ -319,11 +379,13 @@ void setup_tissue( void )
 
             while( x < x_outer )
             {
-                pCell = create_cell(); // tumor cell
-                pCell->assign_position( x , y , 0.0 );
+								if (check_position({x,y,0.0}, 0.9*cell_spacing))
+								{
+									pCell = create_cell(); // tumor cell
+									pCell->assign_position( x , y , 0.0 );
+								}
 
-
-                if( fabs( y ) > 0.01 )
+                if( fabs( y ) > 0.01 && check_position({x,-y,0.0}, 0.9*cell_spacing) )
                 {
                     pCell = create_cell(); // tumor cell
                     pCell->assign_position( x , -y , 0.0 );
@@ -331,10 +393,13 @@ void setup_tissue( void )
 
                 if( fabs( x ) > 0.01 )
                 {
-                    pCell = create_cell(); // tumor cell
-                    pCell->assign_position( -x , y , 0.0 );
+										if ( check_position({-x,y,0.0}, 0.9*cell_spacing) )
+		                {
+											pCell = create_cell(); // tumor cell
+		                  pCell->assign_position( -x , y , 0.0 );
+										}
 
-                    if( fabs( y ) > 0.01 )
+                    if( fabs( y ) > 0.01 && check_position({-x,-y,0.0}, 0.9*cell_spacing) )
                     {
                         pCell = create_cell(); // tumor cell
                         pCell->assign_position( -x , -y , 0.0 );
